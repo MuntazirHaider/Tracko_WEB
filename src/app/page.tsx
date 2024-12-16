@@ -1,9 +1,9 @@
-import Image from "next/image";
+import HomePage from "./dashboard/page";
+
 
 export default function Home() {
+
   return (
-    <div>
-      HI
-    </div>
+    <HomePage/>
   );
 }

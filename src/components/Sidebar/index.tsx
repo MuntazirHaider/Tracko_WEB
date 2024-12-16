@@ -1,8 +1,9 @@
 'use client'
 import { useAppSelector } from '@/app/redux';
 import { setIsSidebarCollapsed } from '@/state';
+import { useGetProjectsQuery } from '@/state/api';
 // icons
-import { AlertCircle, AlertOctagon, AlertTriangle, Briefcase, ChevronDown, ChevronUp, Home, Layers3, LockIcon, LucideIcon, Search, Settings, ShieldAlert, User, Users, X } from 'lucide-react';
+import { AlertCircle, AlertOctagon, AlertTriangle, Briefcase, ChevronDown, ChevronUp, Layers3, BriefcaseBusiness, LucideIcon, Search, Settings, ShieldAlert, User, Users, X, FolderClosed, CircleGauge } from 'lucide-react';
 // next js
 import Image from 'next/image';
 import Link from 'next/link';
@@ -16,12 +17,13 @@ const Sidebar = () => {
     const [showProjects, setShowProjects] = useState(true);
     const [showPriority, setShowPriority] = useState(true);
 
+    const user = useAppSelector((state) => state.global.user);
+
     const NavLinks = [
-        { icon: Home, label: "Home", href: "/" },
+        { icon: CircleGauge, label: "Dashboard", href: "/dashboard" },
         { icon: Briefcase, label: "Timeline", href: "/timeline" },
         { icon: Search, label: "Search", href: "/search" },
         { icon: User, label: "Users", href: "/users" },
-        { icon: Users, label: "Teams", href: "/teams" },
     ];
 
     const Priorities = [
@@ -29,9 +31,10 @@ const Sidebar = () => {
         { icon: ShieldAlert, label: "High", href: "/priority/high" },
         { icon: AlertTriangle, label: "Medium", href: "/priority/medium" },
         { icon: AlertOctagon, label: "Low", href: "/priority/low" },
-        { icon: Layers3, label: "Backlog", href: "/teams" },
+        { icon: Layers3, label: "Backlog", href: "/priority/backlog" },
     ]
 
+    const { data: projects } = useGetProjectsQuery();
     const dispatch = useDispatch();
     const isSidebarCollapsed = useAppSelector((state) => state.global.isSidebarCollapsed);
 
@@ -54,16 +57,16 @@ const Sidebar = () => {
                     )}
                 </div>
 
-                {/* TEAM */}
+                {/* User */}
                 <div className='flex items-center gap-5 border-y-[1.5px] border-gray-200 px-8 py-4 dark:border-gray-700'>
                     <Image src='/logo.png' width={40} height={40} alt="logo" />
                     <div>
                         <h3 className='text-md font-bold tracking-wide dark:text-gray-200'>
-                            MY Teamdwe
+                            {user?.username || "Unknown"}
                         </h3>
                         <div className='mt-1 flex items-start gap-2'>
-                            <LockIcon className='mt-[0.1rem] h-3 w-3 text-gray-500 dark:text-gray-400' />
-                            <p className='text-xs text-gray-500'>Private</p>
+                            <BriefcaseBusiness className='mt-[0.1rem] h-3 w-3 text-gray-500 dark:text-gray-400' />
+                            <p className='text-xs text-gray-500'>{user?.role || "Unknown"}</p>
                         </div>
                     </div>
                 </div>
@@ -85,8 +88,18 @@ const Sidebar = () => {
                     )}
                 </button>
                 {/* Project List */}
+                {showProjects && projects?.map((project) => (
+                    <SidebarLink
+                        key={project.id}
+                        icon={FolderClosed}
+                        label={project.name}
+                        href={`/projects/${project.id}`}
+                    />
+                ))}
 
-                {/* Priority */}
+
+                {/* Priority List Later */}
+{/*                     
                 <button onClick={() => setShowPriority((prev) => !prev)} className='flex w-full items-center justify-between px-8 py-3 text-gray-500'>
                     <span>Priority</span>
                     {showPriority ? (
@@ -95,14 +108,14 @@ const Sidebar = () => {
                         <ChevronDown className='w-5 h-5' />
                     )}
                 </button>
-                {/* Priority List */}
                 {showPriority && (
                     <>
                         {Priorities.map((item, index) => (
                             <SidebarLink key={index} icon={item.icon} label={item.label} href={item.href} />
                         ))}
                     </>
-                )}
+                )} 
+*/}
             </div>
         </div >
     )

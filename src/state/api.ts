@@ -1,3 +1,4 @@
+import { RootState } from "@/app/redux";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface Project {
@@ -5,14 +6,14 @@ export interface Project {
     name: string;
     description?: string;
     startDate?: string;
-    dueDate?: string;
+    endDate?: string;
 }
 
 export enum Status {
-    ToDo = "TO DO",
-    InProgress = "IN PROGRESS",
+    ToDo = "To Do",
+    InProgress = "In Progress",
     UnderReview = "Under Review",
-    Completed = "COMPLETED",
+    Completed = "Completed",
 }
 
 export enum Priority {
@@ -23,17 +24,25 @@ export enum Priority {
     Backlog = "Backlog",
 }
 
+export enum Roles {
+    Admin = "Admin",
+    ProjectManager = "Project Manager",
+    Developer = "Developer",
+    Viewer = "Viewer"
+}
+
 export interface User {
-    userdId?: number;
+    userId?: number;
     username: string;
-    email: string;
     profilePictureUrl?: string;
-    teamId?: number;
+    role: Roles;
+    password?: string;
+    organizationId?: number;
 }
 
 export interface Attachment {
     id: number;
-    fileUrl: string;
+    fileURL: string;
     fileName: string;
     taskId: number;
     uploadById: number;
@@ -59,14 +68,60 @@ export interface Task {
     attachments?: Attachment[];
 }
 
+export interface SearchResult {
+    tasks?: Task[];
+    projects?: Project[];
+    users?: User[];
+}
+
+const customBaseQuery = fetchBaseQuery({
+    baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
+});
+
+const baseQueryWithHeaders = async (args: any, api: any, extraOptions: any) => {
+    const { getState } = api;
+    const token = (getState() as RootState).global.token;
+
+    const headers: HeadersInit = {};
+
+    // Check if it's a sign-in or sign-up request
+    if (args.url === 'auth/signin' || args.url === 'auth/signup') {
+        headers['Accept'] = 'application/json';
+    } else if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return customBaseQuery({ ...args, headers }, api, extraOptions);
+};
+
+
 export const api = createApi({
-    baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL }),
+    baseQuery: baseQueryWithHeaders,
     reducerPath: "api",
-    tagTypes: ["Projects", "Tasks"],
+    tagTypes: ["Projects", "Tasks", "Users",],
     endpoints: (build) => ({
+        // signin user
+        signIn: build.mutation<any, { username: string; password: string }>({
+            query: (credentials) => ({
+                url: "auth/signin",
+                method: "POST",
+                body: credentials,
+            }),
+        }),
+        // signup user
+        signUp: build.mutation<any, { username: string; password: string; organizationName: string; industry: string; established: string; }>({
+            query: (credentials) => ({
+                url: "auth/signup",
+                method: "POST",
+                body: credentials,
+            }),
+        }),
         // get project
         getProjects: build.query<Project[], void>({
-            query: () => "projects",
+            query: () => ({
+                url: "projects",
+                method: "GET",
+            }),
             providesTags: ["Projects"],
         }),
         // create project
@@ -80,7 +135,10 @@ export const api = createApi({
         }),
         // get tasks
         getTasks: build.query<Task[], { projectId: number }>({
-            query: (projectId) => `tasks?projectId=${projectId}`,
+            query: ({ projectId }) => ({
+                url: `tasks?projectId=${projectId}`,
+                method: "GET"
+            }),
             providesTags: (result) => result ? result.map(({ id }) => ({ type: "Tasks" as const, id })) : [{ type: "Tasks" as const }],
         }),
         // create task
@@ -103,6 +161,92 @@ export const api = createApi({
                 { type: "Tasks", id: taskId }
             ],
         }),
+        // search
+        search: build.query<SearchResult, string>({
+            query: (query) => ({
+                url: `search?query=${query}`,
+                method: "GET",
+            })
+        }),
+        // get users
+        getUsers: build.query<User[], void>({
+            query: () => ({
+                url: "/users",
+                method: "GET",
+            }),
+            providesTags: ["Users"]
+        }),
+        // get user by username
+        getUserByUsername: build.query<User, {username: string}>({
+            query: ({username}) => ({
+                url: `/users/${username}`,
+                method: "GET",
+            }),
+        }),
+        // add user
+        addUser: build.mutation<any, { username: string; password: string; organizationId?: number; role: string; profilePictureUrl: string | null }>({
+            query: (data) => ({
+                url: "/users",
+                method: "POST",
+                body: data,
+            }),
+            invalidatesTags: ["Users"],
+        }),
+        // update user
+        updateUser: build.mutation<any, User>({
+            query: (data) => ({
+                url: "/users",
+                method: "PUT",
+                body: data
+            }),
+            invalidatesTags: ["Users"],
+        }),
+        // update profile
+        updateProfile: build.mutation<any, Partial<User>>({
+            query: (data) => ({
+                url: "/users",
+                method: "PATCH",
+                body: data
+            }),
+            invalidatesTags: ["Users"],
+        }),
+        // delete task
+        deleteTask: build.mutation<Task, { taskId: number }>({
+            query: ({ taskId }) => ({
+                url: `tasks/${taskId}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["Tasks"]
+        }),
+        // get user task
+        getTasksByUser: build.query<Task[], number>({
+            query: (userId) => ({
+                url: `tasks/user/${userId}`,
+                method: "GET",
+            }),
+            providesTags: (result, error, userId) =>
+                result
+                    ? result.map(({ id }) => ({ type: "Tasks", id }))
+                    : [{ type: "Tasks", id: userId }],
+        }),
+        // create new comment
+        createComment: build.mutation<Comment, {newComment: string, taskId: number, userId: number | undefined}>({
+            query: (comment) => ({
+                url: "tasks/comment",
+                method: "POST",
+                body: comment,
+            }),
+            invalidatesTags: ["Tasks"]
+        }),
+        // create new attachment
+        createAttachment: build.mutation<Attachment, {fileURL: string, taskId: number | undefined, userId: number | undefined}>({
+            query: (attachment) => ({
+                url: "tasks/attachment/",
+                method: "POST",
+                body: attachment,
+            }),
+            invalidatesTags: ["Tasks"]
+        }),
     }),
 });
 
@@ -111,5 +255,17 @@ export const {
     useCreateProjectMutation,
     useGetTasksQuery,
     useCreateTaskMutation,
-    useUpdateTaskStatusMutation
+    useUpdateTaskStatusMutation,
+    useSearchQuery,
+    useGetUsersQuery,
+    useGetUserByUsernameQuery,
+    useGetTasksByUserQuery,
+    useSignInMutation,
+    useSignUpMutation,
+    useUpdateUserMutation,
+    useUpdateProfileMutation,
+    useAddUserMutation,
+    useDeleteTaskMutation,
+    useCreateCommentMutation,
+    useCreateAttachmentMutation
 } = api;

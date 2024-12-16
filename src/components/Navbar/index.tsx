@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { useDispatch } from 'react-redux'
 import { useAppSelector } from '@/app/redux'
 import { setIsDarkMode, setIsSidebarCollapsed } from '@/state'
+import AccountMenu from '../AccountMenu'
 
 const Navbar = () => {
 
@@ -41,13 +42,12 @@ const Navbar = () => {
                         <Moon className='h-6 w-6 cursor-pointer dark:text-white' />
                     )}
                 </button>
-                <Link
+                {/* <Link
                     href="/settings"
                     className={isDarkMode ? 'h-min w-min rounded p-2 dark:hover:bg-gray-700' : 'h-min w-min rounded p-2 hover:bg-gray-100'}
-                >
-                    <Settings className='h-6 w-6 cursor-pointer dark:text-white' />
-                </Link>
-                <div className='ml-2 mr-5 hidden min-h-[2rem] w-[0.1rem] bg-gray-200 md:inline-block'></div>
+                > */}
+                <AccountMenu />
+                {/* </Link> */}
             </div>
         </div>
     )
