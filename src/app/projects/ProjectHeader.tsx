@@ -5,7 +5,7 @@ import Header from '@/components/Header'
 import TabButton from './TabButton'
 import NewProjectModal from './NewProjectModal'
 // icons
-import { Clock, Filter, Grid3X3, List, PlusSquare, Share2, Table } from 'lucide-react'
+import { Clock, Grid3X3, List, PlusSquare, Table } from 'lucide-react'
 import roleBasedGuard from '@/app/roleBasedGuard'
 
 type Props = {

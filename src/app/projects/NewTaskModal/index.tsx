@@ -19,8 +19,8 @@ interface formInterface {
 
 const NewTaskModal = ({ isOpen, onClose, id }: Props) => {
     const user = useAppSelector((state) => state.global.user);
-    const [createTask, { isLoading }] = useCreateTaskMutation();
-    const [createAttachment, {isLoading: loading}] = useCreateAttachmentMutation();
+    const [createTask] = useCreateTaskMutation();
+    const [createAttachment] = useCreateAttachmentMutation();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [status, setStatus] = useState<Status>(Status.ToDo);

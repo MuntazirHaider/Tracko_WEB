@@ -1,7 +1,7 @@
 'use client'
 
 import Header from "@/components/Header";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useAppSelector } from "../redux";
 import { Avatar } from "@mui/material";
 import { uploadFile } from "@/lib/uploadUtil";
@@ -84,7 +84,7 @@ const Profile = () => {
         if (!user) return;
         setIsLoading(true);
 
-        let body: {
+        const body: {
             userId: any,
             username: string,
             role: Roles,

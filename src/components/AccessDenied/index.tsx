@@ -3,6 +3,7 @@
 import React from 'react';
 import { Modal } from '@mui/material';
 import { useAppSelector } from '@/app/redux';
+import Image from 'next/image';
 
 interface Props {
     isOpen: boolean;
@@ -45,7 +46,7 @@ const AccessDeniedModal = ({ isOpen, onClose }: Props) => {
                     {/* Modal content */}
                     <div className="flex flex-col items-center">
                         {/* Illustration */}
-                        <img
+                        <Image
                             src="https://res.cloudinary.com/ddwxsev3x/image/upload/v1731830718/Image/xq6bxuhljhtjkv4oftug.png"
                             alt="Access Denied Illustration"
                             className="mb-4 h-40 w-40"

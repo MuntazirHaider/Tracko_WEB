@@ -21,7 +21,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     const [isCreateProjectModalOpen, setIsCreateProjectModalOpen] = useState(false);
     const dispatch = useAppDispatch();
   const loggedInUser = useAppSelector((state) => state.global.user);
-  const { data: user, isLoading, isError } = useGetUserByUsernameQuery({username: loggedInUser?.username || ""});
+  const { data: user } = useGetUserByUsernameQuery({username: loggedInUser?.username || ""});
   
     if(user && user.username === loggedInUser?.username && loggedInUser?.role != user.role){
       dispatch(setUser(user));

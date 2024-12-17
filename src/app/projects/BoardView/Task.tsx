@@ -22,7 +22,7 @@ const Task = ({ task }: TaskProps) => {
     const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState<boolean>(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const canDrag = userRole !== 'Viewer';
-    const [deleteTask, { isLoading }] = useDeleteTaskMutation();
+    const [deleteTask] = useDeleteTaskMutation();
     const [createComment] = useCreateCommentMutation();
 
     // const {delete}
@@ -62,7 +62,7 @@ const Task = ({ task }: TaskProps) => {
 
     const handleAddComment = async (newComment: string) => {
         if(newComment.length > 0){
-            const createdComment = await createComment({
+            await createComment({
                 newComment,
                 taskId: task.id ,
                 userId

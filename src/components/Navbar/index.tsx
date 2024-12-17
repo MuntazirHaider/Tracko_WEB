@@ -1,9 +1,7 @@
 // react
 import React from 'react'
 // icons
-import { Menu, Moon, Search, Settings, Sun } from "lucide-react"
-// next js
-import Link from 'next/link'
+import { Menu, Moon, Search, Sun } from "lucide-react"
 // redux
 import { useDispatch } from 'react-redux'
 import { useAppSelector } from '@/app/redux'

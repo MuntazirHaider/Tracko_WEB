@@ -1,5 +1,5 @@
 import { Task as TaskType } from '@/state/api';
-import { EllipsisVertical, ListPlus, SquarePlus } from 'lucide-react';
+import { ListPlus } from 'lucide-react';
 import React from 'react'
 import { useDrop } from 'react-dnd';
 import Task from './Task';

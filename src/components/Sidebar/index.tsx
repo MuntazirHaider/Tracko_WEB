@@ -3,7 +3,7 @@ import { useAppSelector } from '@/app/redux';
 import { setIsSidebarCollapsed } from '@/state';
 import { useGetProjectsQuery } from '@/state/api';
 // icons
-import { AlertCircle, AlertOctagon, AlertTriangle, Briefcase, ChevronDown, ChevronUp, Layers3, BriefcaseBusiness, LucideIcon, Search, Settings, ShieldAlert, User, Users, X, FolderClosed, CircleGauge } from 'lucide-react';
+import { Briefcase, ChevronDown, ChevronUp, BriefcaseBusiness, LucideIcon, Search, User, X, FolderClosed, CircleGauge } from 'lucide-react';
 // next js
 import Image from 'next/image';
 import Link from 'next/link';
@@ -15,7 +15,7 @@ import { useDispatch } from 'react-redux';
 const Sidebar = () => {
 
     const [showProjects, setShowProjects] = useState(true);
-    const [showPriority, setShowPriority] = useState(true);
+    // const [showPriority, setShowPriority] = useState(true);
 
     const user = useAppSelector((state) => state.global.user);
 
@@ -26,13 +26,13 @@ const Sidebar = () => {
         { icon: User, label: "Users", href: "/users" },
     ];
 
-    const Priorities = [
-        { icon: AlertCircle, label: "Urgent", href: "/priority/urgent" },
-        { icon: ShieldAlert, label: "High", href: "/priority/high" },
-        { icon: AlertTriangle, label: "Medium", href: "/priority/medium" },
-        { icon: AlertOctagon, label: "Low", href: "/priority/low" },
-        { icon: Layers3, label: "Backlog", href: "/priority/backlog" },
-    ]
+    // const Priorities = [
+    //     { icon: AlertCircle, label: "Urgent", href: "/priority/urgent" },
+    //     { icon: ShieldAlert, label: "High", href: "/priority/high" },
+    //     { icon: AlertTriangle, label: "Medium", href: "/priority/medium" },
+    //     { icon: AlertOctagon, label: "Low", href: "/priority/low" },
+    //     { icon: Layers3, label: "Backlog", href: "/priority/backlog" },
+    // ]
 
     const { data: projects } = useGetProjectsQuery();
     const dispatch = useDispatch();
@@ -134,7 +134,6 @@ const SidebarLink = ({
 }: SidebarLinkProps) => {
     const pathname = usePathname();
     const isActive = pathname === href || (pathname === "/" && href === "/dashboard");
-    const screenWidth = window.innerWidth;
 
     return (
         <Link href={href} className='w-full'>

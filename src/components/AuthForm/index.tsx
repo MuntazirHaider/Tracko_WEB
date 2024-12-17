@@ -33,7 +33,7 @@ export default function AuthForm({ isLogin, setIsLogin }: AuthFormProps) {
     const router = useRouter();
     const dispatch = useDispatch();
     const [signIn, info] = useSignInMutation();
-    const [signUp, { isLoading, error }] = useSignUpMutation();
+    const [signUp, { isLoading }] = useSignUpMutation();
 
     const handleResetFields = () => {
         setUsername("");
